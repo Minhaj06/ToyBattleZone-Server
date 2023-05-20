@@ -8,7 +8,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qkmfuva.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -49,6 +49,32 @@ const run = async () => {
     app.get("/toys", async (req, res) => {
       const result = await toyCollection.find({}).toArray();
       res.send(result);
+    });
+
+    // Get Toy By ID
+    app.get("/toys/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await toyCollection.findOne({ _id: new ObjectId(id) });
+
+      if (result) {
+        res.send(result);
+      } else {
+        res.status(404).send("Toy not found");
+      }
+    });
+
+    // Get Toys By Seller
+    app.get("/toysBySeller/:email", async (req, res) => {
+      const { email } = req.params;
+
+      const result = await toyCollection.find({ sellerEmail: email }).toArray();
+
+      if (result) {
+        res.send(result);
+      } else {
+        res.status(404).send("Toy not found");
+      }
     });
 
     // Send a ping to confirm a successful connection
