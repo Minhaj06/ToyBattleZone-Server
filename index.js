@@ -77,6 +77,26 @@ const run = async () => {
       }
     });
 
+    // Update Toy
+    app.put("/toysBySeller/:email/:id", async (req, res) => {
+      const { email, id } = req.params;
+      const { toy } = req.body;
+
+      const result = await toyCollection.updateOne(
+        {
+          sellerEmail: email,
+          _id: new ObjectId(id),
+        },
+        {
+          $set: {
+            ...toy,
+          },
+        }
+      );
+
+      res.send(result);
+    });
+
     // Delete Toy
     app.delete("/toysBySeller/:email/:id", async (req, res) => {
       const { email, id } = req.params;
