@@ -47,7 +47,7 @@ const run = async () => {
 
     // Get Toys
     app.get("/toys", async (req, res) => {
-      const result = await toyCollection.find({}).toArray();
+      const result = await toyCollection.find({}).limit(20).toArray();
       res.send(result);
     });
 
@@ -80,7 +80,9 @@ const run = async () => {
     // Update Toy
     app.put("/toysBySeller/:email/:id", async (req, res) => {
       const { email, id } = req.params;
-      const { toy } = req.body;
+      const toy = req.body;
+
+      console.log(toy);
 
       const result = await toyCollection.updateOne(
         {
@@ -93,6 +95,8 @@ const run = async () => {
           },
         }
       );
+
+      console.log(result);
 
       res.send(result);
     });
