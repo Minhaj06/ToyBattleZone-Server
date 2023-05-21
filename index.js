@@ -52,7 +52,7 @@ const run = async () => {
     });
 
     // Search Toys
-    app.get("/toys/search", async (req, res) => {
+    app.get("/toys/search/:keyword", async (req, res) => {
       const { keyword } = req.params;
 
       const filter = {};
