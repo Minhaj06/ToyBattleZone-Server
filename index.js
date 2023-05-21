@@ -51,6 +51,27 @@ const run = async () => {
       res.send(result);
     });
 
+    // Search Toys
+    app.get("/toys/search", async (req, res) => {
+      const { keyword } = req.query;
+
+      const filter = {};
+      if (keyword) {
+        filter.$or = [
+          { toyName: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
+        ];
+      }
+
+      try {
+        const result = await toyCollection.find(filter).limit(20).toArray();
+        res.json(result);
+      } catch (error) {
+        console.error("Error searching for toys:", error);
+        res.status(500).json({ error: "An error occurred while searching for toys." });
+      }
+    });
+
     // Get Toy By ID
     app.get("/toys/:id", async (req, res) => {
       const { id } = req.params;
@@ -82,8 +103,6 @@ const run = async () => {
       const { email, id } = req.params;
       const toy = req.body;
 
-      console.log(toy);
-
       const result = await toyCollection.updateOne(
         {
           sellerEmail: email,
@@ -95,8 +114,6 @@ const run = async () => {
           },
         }
       );
-
-      console.log(result);
 
       res.send(result);
     });
